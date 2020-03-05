@@ -6,8 +6,8 @@ using UnityEngine;
 public class NumberWizard : MonoBehaviour
 {
     //setting starting max an min guesses
-    int maxGuess = 1000;
-    int minGuess = 1;
+    int maxGuess;
+    int minGuess;
 
     //random guess generator
     System.Random r = new System.Random();
@@ -16,6 +16,45 @@ public class NumberWizard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StartGame();
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            //if player presses down arrow key, it means the number picked is lower than my guess
+            //so all my next guesses won't make sense being higher than the current one
+            //that means the maxGuess should be replaced by this last guess attempt
+            maxGuess = guess;
+            NextGuess();
+        }
+
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            //if player presses up arrow key, it means the number picked is higher than my guess
+            //so all my next guesses won't make sense being lower than the current one
+            //that means the minGuess should be replaced by this last guess attempt
+            minGuess = guess;
+            NextGuess();
+        }
+        
+        //if enter key is pressed, it means my guess was right - yay!
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            Debug.Log("Yay!");
+            StartGame();
+        }
+            
+    }
+
+    void StartGame()
+    {
+        maxGuess = 1000;
+        minGuess = 1;
+
         //instructions printed in the console to the player
         Debug.Log("Welcome to Number Wizard!");
         Debug.Log("Pick a number, don't tell me what it is.");
@@ -29,37 +68,13 @@ public class NumberWizard : MonoBehaviour
         //first guess
         guess = r.Next(minGuess, maxGuess + 1);
         Debug.Log("Is you number higher or lower than " + guess);
-
     }
 
-    // Update is called once per frame
-    void Update()
+    void NextGuess()
     {
-        //if player presses down arrow key, it means the number picked is lower than my guess
-        //so all my next guesses won't make sense being higher than the current one
-        //that means the maxGuess should be replaced by this last guess attempt
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            maxGuess = guess;
-            guess = r.Next(minGuess, maxGuess + 1);
-            Debug.Log("Is you number higher or lower than " + guess);
-        }
-
-        //if player presses up arrow key, it means the number picked is higher than my guess
-        //so all my next guesses won't make sense being lower than the current one
-        //that means the minGuess should be replaced by this last guess attempt
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            minGuess = guess;
-            guess = r.Next(minGuess, maxGuess + 1);
-            Debug.Log("Is you number higher or lower than " + guess);
-        }
-        
-        //if enter key is pressed, it means my guess was right - yay!
-        else if (Input.GetKeyDown(KeyCode.Return))
-        {
-            Debug.Log("Yay!");
-        }
-            
+        //generate a new random guess considering the new max or min value based on the user feedback
+        guess = r.Next(minGuess, maxGuess + 1);
+        Debug.Log("Is you number higher or lower than " + guess);
     }
+
 }
